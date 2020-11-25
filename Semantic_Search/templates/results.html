@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+      <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+      <title>Similarity search</title>
+      <style>
+         .vals{
+         color:rgb(68, 63, 63);
+         font-size: 17px;
+         font-family: inherit;
+         padding-left: 4px;
+         }
+         .vals:hover{
+         border-bottom: grey 0.4px outset;
+         font-size: 20px;
+         font-weight: 500;
+         color: rgb(8, 54, 153);
+         background-color: azure;
+         margin: 4px;
+         padding-left: 2px;
+         }
+         .suggest_box{
+         background-color: aqua;
+         position: absolute;
+         z-index: 10;
+         width: 100%;
+         border: 1px solid;
+         padding: 6px;
+         -webkit-box-shadow: -2px 2px 20px -5px rgba(147,230,106,1);
+         -moz-box-shadow: -2px 2px 20px -5px rgba(147,230,106,1);
+         box-shadow: -2px 2px 20px -5px rgba(147,230,106,1);
+         }
+      </style>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <meta charset="utf-8">
+      <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+      <title>Similarity search</title>
+
+      <script>
+         $(document).ready(function(){
+
+           $("#suggesstion-box").hide();
+           $("#autocomplete").on('keydown',function(){
+
+                     $(".vals").remove();
+                     let data_arr = [];
+                     $.ajax({
+                     type: "POST",
+                     // url: "http://kubernetes.docker.internal:8000/auto_complete",  // this url needs to be
+                     //changed while deploying
+                     url: "http://DESKTOP-BHKPQ8A:7001/auto_complete",
+                     data:{input:$(this).val()},
+                     beforeSend: function(){
+                     },
+                     success: function(data){
+
+                     $("#suggesstion-box").show();
+
+                       $.each(data.hits , function(index, val) {
+                       //   console.log(val);
+                         $("#suggesstion-box").append("<div class='vals' id='" + val + "'>" + val + "</div>");
+                  });
+                       $("#autocomplete").css("background","#FFF");
+                     }
+                     });
+                   });
+                  //To select country name
+                   $(document).on('click','.vals',function() {
+
+                      let val = $(this).attr("id");
+                      console.log(val);
+
+                      $("#autocomplete").val(val);
+                      $("#suggesstion-box").hide();
+                      $("#suggesstion-box").empty();
+                      });
+           });
+
+      </script>
+   </head>
+   <body>
+      <div class="container">
+         <div style="background:transparent !important" class="jumbotron">
+            <div style="font-family: 'Pacifico';">
+               <center>
+                  <h2>Semantic Search Engine</h2>
+               </center>
+            </div>
+         </div>
+         <form action="/search" method="post">
+            <div class="input-group">
+               <input id="autocomplete" type="text" class="form-control input-lg" name="input" placeholder="Your query here" autofocus>
+               <div class="suggest_box" id="suggesstion-box"></div>
+               <div class="input-group-btn">
+                  <button class="btn btn-primary btn-lg" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                  </button>
+               </div>
+            </div>
+         </form>
+         <center>
+            Your query:
+            <strong>
+               <h4>{{question}} </h4>
+            </strong>
+            <br><br>
+            <strong> Showing Top {{ total }} results </strong>
+         </center>
+         <table class="table">
+            <thead>
+               <tr>
+                  <th>Documents</th>
+               </tr>
+            </thead>
+            {% for hit, idx in response %}
+            <tbody>
+               <tr>
+                  <td>
+                  <strong>ID:  </strong>{{idx}}<br>
+                  <strong>Description:  </strong>{{ hit['body'] }}<br>
+                  </td>
+               </tr>
+            </tbody>
+            {% endfor %}
+         </table>
+      </div>
+   </body>
+</html>

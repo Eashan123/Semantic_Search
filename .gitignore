@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtualenv
+envr/*
+
+
+#Git
+.git/*
+
+
+#model
+#./Semantic_Search/data/*
+#./Semantic_Search/semantic_search/embeddings/*
+Semantic_Search/data/*
+Semantic_Search/semantic_search/embeddings/*
+
